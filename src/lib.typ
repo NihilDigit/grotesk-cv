@@ -1,5 +1,19 @@
-#let meta = toml("./template/info.toml")
-#import meta.import.fontawesome: *
+#let fa-icon(icon) = []
+
+#let contact-icon(icon, color) = {
+  if icon == "mail" {
+    image("../../../src/assets/icons/IconMail.svg", width: 8pt)
+  } else if icon == "github" {
+    image("../../../src/assets/icons/IconGitHub.svg", width: 8pt)
+  } else if icon == "orcid" {
+    image("../../../src/assets/icons/IconOrcid.svg", width: 8pt)
+  } else {
+    box(
+      width: 8pt,
+      text(size: 8pt, weight: "bold", fill: rgb(color), [↗]),
+    )
+  }
+}
 
 
 #let section-title-style(str, color) = {
@@ -41,15 +55,20 @@
   color,
   include-icons,
 ) = {
-  text(
-    size: 10pt,
-    fill: rgb(color),
-    weight: "medium",
-    if include-icons {
-      fa-icon(icon) + h(10pt) + txt
-    } else {
-      txt
-    },
+  box(
+    width: 100%,
+    grid(
+      columns: (10pt, 1fr),
+      column-gutter: 5pt,
+      align: horizon,
+      contact-icon(icon, color),
+      text(
+        size: 10pt,
+        fill: rgb(color),
+        weight: "medium",
+        txt,
+      ),
+    ),
   )
 }
 
@@ -70,7 +89,7 @@
   let color = metadata.layout.text.color.medium
   let include-icons = metadata.personal.include_icons
   table(
-    columns: if use-photo {(1fr, 1fr)} else {(1fr, 1fr, 1fr)},
+    columns: if use-photo {(1fr, 1fr)} else {(1fr, 1fr)},
     stroke: none,
     ..info.pairs().map(((key, val)) => info-block-style(icons.at(key), info-value(val), color, include-icons))
   )
@@ -144,12 +163,7 @@
       )
     )
   } else {
-    box(
-      clip: true,
-      stroke: 5pt + yellow,
-      radius: 50%,
-      fill: yellow,
-    )
+    none
   }
 }
 
